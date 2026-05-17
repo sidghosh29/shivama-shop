@@ -1,12 +1,26 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import { Row, Col, Image, ListGroup, Card, Button } from "react-bootstrap";
-import products from "../products";
 import Rating from "../components/Rating";
 
 const ProductScreen = () => {
   const { id: ProductId } = useParams();
-  const product = products.find((p) => p._id === ProductId);
+  const [product, setProduct] = useState({});
+
+  useEffect(() => {
+    console.log("effect run for id=", ProductId);
+    const fetchProduct = async () => {
+      const resp = await axios.get(`/api/products/${ProductId}`);
+      setProduct(resp.data);
+    };
+    fetchProduct();
+    return () => console.log("cleanup/unmount for id=", ProductId);
+    // If your effect returns a function, React will run it when it is time to clean up,
+    // such as before unmounting the component or before running the effect again.
+    // You can use this for things like cancelling network requests, or cleaning up any
+    // subscriptions that were created in the effect.
+  }, [ProductId]);
   return (
     <>
       <Link className="btn btn-light my-3" to="/">
