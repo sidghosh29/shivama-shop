@@ -9,7 +9,7 @@ const getProducts = asyncHandler(async (req, res) => {
   res.json(products);
   // res.json() is essentially a specialized version of res.send() for JSON.
   // res.set("Content-Type", "application/json");
-  //   res.send(JSON.stringify(data));
+  // res.send(JSON.stringify(data));
 });
 
 // @desc    Fetch a product by ID

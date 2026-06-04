@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { apiSlice } from "./slices/apiSlice";
 import cartSliceReducer from "./slices/cartSlice";
+import authSliceReducer from "./slices/authSlice";
 
 const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ const store = configureStore({
     // "undefined" crash. Using this variable guarantees the store and hooks stay perfectly synced.
     [apiSlice.reducerPath]: apiSlice.reducer,
     cart: cartSliceReducer,
+    auth: authSliceReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware),

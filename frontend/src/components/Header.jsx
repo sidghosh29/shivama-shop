@@ -1,13 +1,34 @@
-import { Navbar, Nav, Container, Badge } from "react-bootstrap";
+import { Navbar, Nav, Container, Badge, NavDropdown } from "react-bootstrap";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
 import { LinkContainer } from "react-router-bootstrap";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+
+import { useEffect } from "react";
+import { useLogoutMutation } from "../slices/usersApiSlice";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../slices/authSlice";
 
 const Header = () => {
   const { cartItems } = useSelector((state) => state.cart);
+  const { userInfo } = useSelector((state) => state.auth);
 
+  const [logoutApiCall, { isLoading }] = useLogoutMutation();
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const logoutHandler = async () => {
+    // Implement logout functionality here
+    try {
+      await logoutApiCall().unwrap();
+      dispatch(logout());
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
   return (
     <header>
       <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
@@ -34,9 +55,20 @@ const Header = () => {
                   </Badge>
                 )}
               </Nav.Link>
-              <Nav.Link as={Link} to="/login">
-                <FaUser /> Sign In
-              </Nav.Link>
+              {userInfo ? (
+                <NavDropdown title={userInfo.name} id="username">
+                  <LinkContainer to="/profile">
+                    <NavDropdown.Item>Profile</NavDropdown.Item>
+                  </LinkContainer>
+                  <NavDropdown.Item onClick={logoutHandler}>
+                    Logout
+                  </NavDropdown.Item>
+                </NavDropdown>
+              ) : (
+                <Nav.Link as={Link} to="/login">
+                  <FaUser /> Sign In
+                </Nav.Link>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>
